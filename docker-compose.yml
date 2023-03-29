@@ -1,15 +1,15 @@
 ---
 version: '3.8'
 services:
-  postgres.db:
-    image: postgres:15
-    ports:
-      - '5432:5432'
+  cockroach.db:
+    container_name: node_1
+    image: cockroachdb/cockroach:latest
     volumes:
-      - pg-db:/var/lib/postgresql/data
-    environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_DATABASE: todos
+      - db:/cockroach/cockroach-data
+    command: start-single-node --insecure
+    ports:
+      - '26257:26257'
+      - '8080:8080'
 
 volumes:
-  pg-db:
+  db:
