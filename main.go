@@ -26,7 +26,6 @@ func main() {
 	}
 
 	r.GET("/assets/*filepath", func(c *gin.Context) { staticHandler(c, assetsServer) })
-
 	r.GET("/", indexHandler)
 
 	// Start the server
