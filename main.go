@@ -2,9 +2,16 @@ package main
 
 import (
 	"embed"
+	"log"
 	"net/http"
+	"os"
 
+	"github.com/danhawkins/go-react-example/todos"
 	"github.com/gin-gonic/gin"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 // content holds our static web server content.
@@ -14,6 +21,16 @@ import (
 var content embed.FS
 
 func main() {
+	db, err := gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")+"&application_name=$ go_react_example"), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("Failed to connect to database %s", err)
+	}
+
+	err = todos.Setup(db)
+	if err != nil {
+		log.Fatalf("Failed to migrate database %s", err)
+	}
+
 	// Create a file server for the embedded assets
 	assetsServer := http.FileServer(http.FS(content))
 
