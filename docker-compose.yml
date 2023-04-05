@@ -1,6 +1,14 @@
 ---
 version: '3.8'
 services:
+  app:
+    build: .
+    profiles: ['dev']
+    command: air cmd/main.go -b 0.0.0.0
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
   cockroach.db:
     container_name: node_1
     image: cockroachdb/cockroach:latest
