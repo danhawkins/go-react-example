@@ -11,13 +11,17 @@ type TodoService struct {
 }
 
 func NewTodoService(app *fiber.App, db *gorm.DB) *TodoService {
-	return &TodoService{
+	svc := &TodoService{
 		app: app,
 		db:  db,
 	}
+
+	svc.Setup()
+
+	return svc
 }
 
-func Setup(app *fiber.App, db *gorm.DB) {
+func (s *TodoService) Setup(app *fiber.App, db *gorm.DB) {
 	setupRoutes(app)
 	setupDb(db)
 }
