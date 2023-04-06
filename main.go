@@ -2,9 +2,15 @@ package main
 
 import (
 	"embed"
+	"log"
+	"os"
 
+	"github.com/danhawkins/go-react-example/todos"
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/joho/godotenv/autoload"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // content holds our static web server content.
@@ -14,11 +20,17 @@ import (
 var content embed.FS
 
 func main() {
+	db, err := gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")+"&application_name=$ go_react_example"), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
+
+	if err != nil {
+		log.Fatal("Failed to connect to database \n", err)
+		os.Exit(2)
+	}
+	log.Println("Connected to database")
+
 	app := fiber.New()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World 👋!")
-	}
+	todos.Setup(app, db)
 }
 
 // func main() {

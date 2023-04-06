@@ -1,13 +1,27 @@
 package todos
 
 import (
-	"time"
-
-	"github.com/google/uuid"
+	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
-type Todo struct {
-	ID          uuid.UUID `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
-	Task        string    `json:"task" gorm:"type:varchar(255);not null"`
-	CompletedAt time.Time `json:"completed_at" gorm:"type:timestamp"`
+type TodoService struct {
+	app *fiber.App
+	db  *gorm.DB
+}
+
+func NewTodoService(app *fiber.App, db *gorm.DB) *TodoService {
+	return &TodoService{
+		app: app,
+		db:  db,
+	}
+}
+
+func Setup(app *fiber.App, db *gorm.DB) {
+	setupRoutes(app)
+	setupDb(db)
+}
+
+func setupDb(db *gorm.DB) {
+	db.AutoMigrate(&Todo{})
 }
