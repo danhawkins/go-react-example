@@ -4,12 +4,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/danhawkins/go-react-example/todos"
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/joho/godotenv/autoload"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+
+	"github.com/danhawkins/go-react-example/todos"
+	"github.com/danhawkins/go-react-example/todos_web"
 )
 
 func main() {
@@ -23,7 +25,15 @@ func main() {
 
 	app := fiber.New()
 
-	todos.Setup(app, db)
+	// Setup Todos Service
+	todosRepo := todos.NewTodoRepository(db)
+	if err := todosRepo.Migrate(); err != nil {
+		log.Fatal("Failed to migrate database \n", err)
+		os.Exit(2)
+	}
+
+	todosWeb := todos_web.NewTodosWeb(app, todos.NewTodoService(todosRepo))
+	todosWeb.SetupRoutes()
 
 	app.Listen(":3000")
 }

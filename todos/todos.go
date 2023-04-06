@@ -1,31 +1,12 @@
 package todos
 
-import (
-	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
-)
-
 type TodoService struct {
-	app *fiber.App
-	db  *gorm.DB
+	repo *TodoRepository
 }
 
-func NewTodoService(app *fiber.App, db *gorm.DB) *TodoService {
+func NewTodoService(repo *TodoRepository) *TodoService {
 	svc := &TodoService{
-		app: app,
-		db:  db,
+		repo: repo,
 	}
-
-	svc.Setup()
-
 	return svc
-}
-
-func (s *TodoService) Setup(app *fiber.App, db *gorm.DB) {
-	setupRoutes(app)
-	setupDb(db)
-}
-
-func setupDb(db *gorm.DB) {
-	db.AutoMigrate(&Todo{})
 }
